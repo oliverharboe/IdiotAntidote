@@ -60,7 +60,7 @@ class FlashcardDeck:
     def update_card_score(self,card,current_score,userrating):
         if userrating != 0:
             new_score = -(100/userrating)
-            updated_score = (new_score*current_score)/2
+            updated_score = (new_score*1.65+current_score*0.625)/2
             heappush(self.cardheap,(updated_score,card))
 
 
@@ -100,6 +100,7 @@ def main():
     while len(deck.cards) < len(deck.chunks): # it will keep generating new cards until all possible are generated
         deck.generate_flashcards()
         score,card = deck.draw_flashcard()
+        print(score)
         userrating = deck.show_flashcards(card)
         deck.update_card_score(card,score,userrating)
     while True: # just rating system
