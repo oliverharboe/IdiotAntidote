@@ -7,9 +7,9 @@ from heapq import heappush,heappop
 
 
 class FlashcardDeck:
-    def __init__(self):
+    def __init__(self,path="books/"):
         self.cards = {} # cards with question, answer and context
-        self.path = "books/" # path to pdfs 
+        self.path = path # path to pdfs 
         self.chunks = [] # chunks of pdf
         self.cardheap = [] # priority queue of flashcards weighted by user score
 
@@ -60,11 +60,8 @@ class FlashcardDeck:
     def update_card_score(self,card,current_score,userrating):
         if userrating != 0:
             new_score = -(100/userrating)
-            updated_score = (new_score*1.65+current_score*0.625)/2
+            updated_score = (new_score*1.5+current_score*0.5)/2
             heappush(self.cardheap,(updated_score,card))
-
-
-    
 
     
     def show_flashcards(self,card):
@@ -76,12 +73,12 @@ class FlashcardDeck:
             print(f"Context: {card[2]}")
             print(f"Page: {card[3]}")
         print("-----------------------------")
-        userrating = float(input("rate yourself from (1-5) 1 is bad, 5 is good.\n Enter 0 if you don't want to rate: "))
+        userrating = float(input(
+                "rate yourself from (1-5) 1 is bad, 5 is good.\n " \
+                "Enter 0 if you don't want to rate: "))
         return userrating
 
 
-    
-    
     def get_new_index(self):
         """
         finds new index that has not been used 
@@ -91,16 +88,15 @@ class FlashcardDeck:
             if random_index not in self.cards: 
                 return random_index
 
-
-
-
 def main():
+    # creates flashcard deck
     deck = FlashcardDeck()
-    deck.load_and_split()
-    while len(deck.cards) < len(deck.chunks): # it will keep generating new cards until all possible are generated
+    deck.load_and_split() # loads pdfs from path and splits them
+    # it will keep generating new cards until all possible are generated
+    while len(deck.cards) < len(deck.chunks):
         deck.generate_flashcards()
         score,card = deck.draw_flashcard()
-        print(score)
+        print(f"score : {score}")
         userrating = deck.show_flashcards(card)
         deck.update_card_score(card,score,userrating)
     while True: # just rating system
