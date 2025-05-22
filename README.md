@@ -8,5 +8,5 @@ This little program takes those scary, complicated PDF files and turns them into
 So buckle up, hit start, and prepare to get smarter (or at least fake it really well).
 Good luck, you stupid piece of shit
 
-
-
+## psst...
+You can use Mitrals.ai's API free-tier models – lack of money isn't the reason you're stupid ;-)
