@@ -1,6 +1,16 @@
 from openai import OpenAI
 from mistralai import Mistral
-from config import DEEPSEEK_KEY,MISTRAL_KEY
+import os
+from dotenv import load_dotenv
+
+# gets apikeys from .env file
+
+
+load_dotenv()
+MISTRAL_KEY = os.getenv("MISTRAL_KEY")
+
+
+### PROMPT STUFF ###
 
 SYSTEM_CONTENT = """
 Du er ekspert i undervisning.
@@ -23,12 +33,13 @@ Svar altid i én linje som vist. INGEN forklaringer, mellemrum eller ekstra teks
 """
 
 
+
 def deepseek_model(chunk):
     """
     uses deepseek model to generate flashcards 
     """
     client = OpenAI(
-        api_key = DEEPSEEK_KEY,
+        api_key = 'DEEPSEEK_KEY',
         base_url = "https://api.deepseek.com"
     )
     response = client.chat.completions.create(
@@ -44,7 +55,7 @@ def openai_model(chunk):
     """
     uses openai model to generate flashcards
     """
-    client = OpenAI(api_key = "OPENAI_KEY",)
+    client = OpenAI(api_key = 'OPENAI_KEY',)
     response = client.chat.completions.create(
         model = "gpt-4o-mini",
         messages=[
@@ -56,6 +67,7 @@ def openai_model(chunk):
 
 
 def mistral_model(chunk):
+    # uses mistral model free tier 
     model = "mistral-small-latest"
     client = Mistral(api_key=MISTRAL_KEY)
     chat_response = client.chat.complete(
