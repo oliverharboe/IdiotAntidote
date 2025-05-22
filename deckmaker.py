@@ -3,6 +3,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from random import randint
 from models import mistral_model
 from heapq import heappush,heappop
+from cliinterface import CLIInterface
 
 
 
@@ -33,6 +34,7 @@ class FlashcardDeck:
         self.chunks = chunks
     
     def generate_flashcards(self,model=mistral_model,amount=1):
+        # generates flashcards using pdf file and llm model
         for i in range(amount):
 
             index = self.get_new_index() 
@@ -64,21 +66,6 @@ class FlashcardDeck:
             heappush(self.cardheap,(updated_score,card))
 
     
-    def show_flashcards(self,card):
-        print(f"Question: {card[0]}")
-        input("Press enter to show answer")
-        print(f"Answer: {card[1]}")
-        ans = input("source? (y/n)")
-        if ans == "y":
-            print(f"Context: {card[2]}")
-            print(f"Page: {card[3]}")
-        print("-----------------------------")
-        userrating = float(input(
-                "rate yourself from (1-5) 1 is bad, 5 is good.\n " \
-                "Enter 0 if you don't want to rate: "))
-        return userrating
-
-
     def get_new_index(self):
         """
         finds new index that has not been used 
@@ -92,16 +79,25 @@ def main():
     # creates flashcard deck
     deck = FlashcardDeck()
     deck.load_and_split() # loads pdfs from path and splits them
+    interfaceview = CLIInterface()
     # it will keep generating new cards until all possible are generated
     while len(deck.cards) < len(deck.chunks):
         deck.generate_flashcards()
         score,card = deck.draw_flashcard()
-        print(f"score : {score}")
-        userrating = deck.show_flashcards(card)
+
+        interfaceview.show_flashcards(card)
+        interfaceview.get_source(card)
+        userrating = interfaceview.user_rating()
+
         deck.update_card_score(card,score,userrating)
+
     while True: # just rating system
         score,card = deck.draw_flashcard()
-        userrating = deck.show_flashcards(card)
+
+        interfaceview.show_flashcards(card)
+        interfaceview.get_source(card)
+        userrating = interfaceview.user_rating(card)
+
         deck.update_card_score(card,score,userrating)
     
 
